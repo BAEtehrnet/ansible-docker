@@ -1,0 +1,55 @@
+I) Prérequis
+	1) Un server linux avec Ansible d'installé
+	2) Au moins 3 serveurs Linux qui seront utilisé pour le Swarm
+
+Avant de commencer à utiliser les playbooks suivant, il faut commencer par générer une clef RSA sur le server Ansible
+pour le SSH et la déployer sur les serveurs en utilisant les commandes suivantes.
+
+\ ssh-keygen #Cette commande sert à générer la clef
+\ ssh-copy-id -i ~/.ssh/tatu-key-ecdsa user@host #Cette commande sert à déployer la clef sur les différents serveurs. Il faut adapter la commande et la lancer sur chaque serveurs
+
+Une fois ceci fait, tester le SSH avec ssh user@host. Si l'export de la clef a fonctionné, il ne devrait pas y avoir de mdp.
+
+II) Edition du fichier host de Ansible
+
+Après le transport des clefs, entrer dans le dossier ou sont stockés les Playsbooks et éditer le fichier host afin qu'il correspondent au schéma du réseau.
+Exemple : 
+-  [webserver]
+-  your_server_ip
+
+III) Test de contact des hôtes:
+Pour tester que Ansible fonctionne, utiliser la commande suivante: 
+\ ansible webserver -m ping -i ../hosts
+
+Le résultat devrait être le suivant: 
+your_server_ip | success >> {
+    "changed": false, 
+    "ping": "pong"
+}
+
+IV) Lancer les playbooks d'installations de Docker
+1.) Installer Docker
+Une fois le test effectuer, lancer le premier playbook "1Docker-Dependances.yml" avec la commande 
+\ ansible-playbook -i hosts 1Docker-Dependances.yml
+afin d'installer les dépendances nécessaire au bon fonctionnement de Docker sur les serveurs. Attendre la fin de la commande
+
+Lancer le second Playbook "2Docker-Install.yml" avec la commande 
+\ ansible-playbook -i hosts 2Docker-Install.yml 
+afin de récupérer la clef PGP, d'ajouter le repo sur les serveurs et d'installer les paquets de Docker.
+
+2.) Créer le Swarm et ajouter les nodes
+Une fois le playbook éxécuté sur les serveurs, se rendre sur le serveur qui sera le manager du swarm. Lancer la commande 
+\docker swarm init
+puis copier la ligne de commande qui s'affiche sur le terminal après l'utilisation de la commande d'initialisation du swarm. Coller la ligne dans le fichier
+"3swarm_join.yml". Une fois la copie faite, lancer la commande 
+\ansible-playbook -i hosts 3swarm_join.yml
+Attendre la fin du processus.  
+
+3.) Lancer l'installation de la stack portainer
+Lancer la commande 
+\ansible-playbook -i hosts 4portainer_stack.yml
+afin d'installer portainer sur le manager et déployer les containers sur les nodes workers.
+Tester portainer en allant sur ip_du_manager:9000.
+
+https://www.codementor.io/@mamytianarakotomalala/how-to-deploy-docker-container-with-ansible-on-debian-8-mavm48kw0
+https://www.ssh.com/ssh/keygen/

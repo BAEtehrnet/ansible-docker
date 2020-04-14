@@ -1,0 +1,10 @@
+#Dans ce fichier mettre tous les hosts ou l'on souhaite travailler.
+#L'option ansible_ssh_user et ansible_ssh_pass définie le nom d'utilisateur et le mdp ssh de l'hote
+[docker-master]
+#Mettre ici l'adresse du node qui sera le manager du swarm.
+192.168.1.7 ansible_connection=ssh  ansible_ssh_user=root ansible_ssh_pass=!Indiana1
+[docker-slaves]
+#Mettre ici les adresses des nodes qui seront les workers.
+192.168.1.8 ansible_connection=ssh  ansible_ssh_user=root ansible_ssh_pass=!Indiana1
+192.168.1.9 ansible_connection=ssh  ansible_ssh_user=root ansible_ssh_pass=!Indiana1
+

@@ -1,0 +1,8 @@
+#Ce playbook sert à ajouter des nodes en tant que workers dans un swarm Docker. Il est à lancer sur les membres du swarm [docker-slaves]
+#La commande /docker swarm init/ est à lancer au préalable sur le serveur docker qui sera défini comme étant le manager du swarm.
+- name: install Docker
+  hosts: docker-slaves
+- tasks:
+        - name: Swarm join
+#Modifier la ligne suivante avec la commande issu du swarm init sur le manager ceci est un exemple de configuration de mes premiers tests.
+          shell: docker swarm join --token SWMTKN-1-6d6wo1a4ii4gvr9441twxbsoqmhgj8q2xwjbp1i3qsbniwdn7j-alihx3towpznowfrkpwrb4gtr 192.168.1.7:2377

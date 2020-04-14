@@ -1,0 +1,9 @@
+#Ce playbook permet l'installation d'une stack portainer sur Docker. Il est à effectuer sur les membres du groupe hosts [docker-master] ou manager du fichier
+#hosts
+- name: Test Docker
+  hosts: docker-master
+  tasks:
+    - name: Pull stack Portainer
+      shell: curl -L https://downloads.portainer.io/portainer-agent-stack.yml -o portainer-agent-stack.yml
+    - name: Déployer stack Docker
+      shell: docker stack deploy --compose-file=portainer-agent-stack.yml portainer
